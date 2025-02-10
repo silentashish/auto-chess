@@ -1,24 +1,25 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { viteStaticCopy } from "vite-plugin-static-copy";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [
     react(),
     viteStaticCopy({
-      targets: [
-        {
-          src: 'public/manifest.json',
-          dest: '.',
-        }
-      ],
+      targets: [{ src: "public/manifest.json", dest: "." }],
     }),
+    tailwindcss(),
   ],
   build: {
-    outDir: 'build',
+    outDir: "build",
     rollupOptions: {
       input: {
-        main: './index.html',
+        main: "./index.html",
+        content: "./src/content.ts",
+      },
+      output: {
+        entryFileNames: "[name].js",
       },
     },
   },

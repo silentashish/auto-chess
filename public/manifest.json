@@ -1,10 +1,25 @@
 {
-    "manifest_version": 3,
-    "name": "React Chrome Extension",
-    "version": "1.0.0",
-    "description": "A simple React app as a Chrome extension",
-    "action": {
-      "default_popup": "index.html"
-    },
-    "permissions": []
+  "manifest_version": 3,
+  "name": "AutoChess",
+  "version": "1.0",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["scripting", "activeTab", "storage", "windows"],
+  "host_permissions": ["https://www.chess.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.chess.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "autochess.png",
+    "icons": {
+      "16": "autochess.png",
+      "48": "autochess.png",
+      "128": "autochess.png"
+    }
   }
+}

@@ -84,4 +84,4 @@ const waitForElement = setInterval(() => {
     observer.observe(container, { childList: true, subtree: true });
     sendMovesToPopup(); // Send initial moves
   }
-}, 1000);
+}, 500);

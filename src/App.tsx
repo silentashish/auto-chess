@@ -48,7 +48,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {moves.map((move, index) => (
+          {moves.reverse().map((move, index) => (
             <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {move.moveNumber}

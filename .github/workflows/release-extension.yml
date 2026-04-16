@@ -1,0 +1,64 @@
+name: Release Chrome Extension
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag (for example: v1.0.0)
+        required: true
+        type: string
+      release_name:
+        description: Optional release name
+        required: false
+        type: string
+      prerelease:
+        description: Mark release as pre-release
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Create extension zip
+        run: |
+          zip_name="autochess-extension-${{ github.event.inputs.tag }}.zip"
+          cd build
+          zip -r "../${zip_name}" .
+
+      - name: Upload zip as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: autochess-extension-${{ github.event.inputs.tag }}
+          path: autochess-extension-${{ github.event.inputs.tag }}.zip
+
+      - name: Create or update GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.event.inputs.tag }}
+          name: ${{ github.event.inputs.release_name != '' && github.event.inputs.release_name || github.event.inputs.tag }}
+          artifactErrorsFailBuild: true
+          artifacts: autochess-extension-${{ github.event.inputs.tag }}.zip
+          generateReleaseNotes: true
+          allowUpdates: true
+          prerelease: ${{ github.event.inputs.prerelease }}
+          token: ${{ secrets.GITHUB_TOKEN }}

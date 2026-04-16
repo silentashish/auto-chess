@@ -1,66 +1,87 @@
-# React Chrome Extension Template
+# AutoChess Chrome Extension
+AutoChess is a Chrome extension project focused on helping users on Chess.com by surfacing useful game context now and, next, suggesting the best move from an engine.
 
-This is a template for creating a Chrome extension using React and [Vite](https://vitejs.dev/) with TypeScript.
+## Progress Snapshot
+### ✅ Implemented
+- Manifest V3 extension scaffold is in place (`public/manifest.json`).
+- Content script runs on Chess.com and extracts visible moves from the live game panel (`src/content.ts`).
+- Background service worker receives/stores latest moves and forwards them to the popup (`public/background.js`).
+- React popup UI renders captured moves in a table (`src/App.tsx`).
+- Build pipeline outputs extension assets into `build/` (`vite.config.ts`).
 
+### 🚧 In Progress / Not Yet Implemented
+- Best-move recommendation engine is not integrated yet.
+- Position extraction in FEN format is not implemented yet.
+- No evaluation score, principal variation, or move-quality classification yet.
+- Chess.com DOM selectors are still brittle and need hardening.
+- No automated tests yet for parsing, messaging, or UI behavior.
 
-## Getting Started
+## Current Architecture
+- `src/content.ts`
+  - Runs on `https://www.chess.com/*`.
+  - Watches the move list container with `MutationObserver`.
+  - Extracts move metadata (move number, piece, SAN-like move text).
+  - Sends updates to the extension runtime.
+- `public/background.js`
+  - Maintains a cached `latestMoves` state.
+  - Relays data between content script and popup.
+  - Opens/focuses a popup window when extension action is clicked.
+- `src/App.tsx`
+  - Requests latest moves on mount.
+  - Subscribes to forwarded updates from background script.
+  - Displays moves in a table.
 
+## Plan to Add "Next Best Move"
+1. **Position fidelity**
+   - Derive full board state (FEN) reliably from Chess.com page state.
+   - Normalize move parsing and handle edge cases (castling, promotions, checks, mates).
+2. **Engine integration**
+   - Integrate a local Stockfish WASM worker for on-device analysis.
+   - Pass FEN + analysis depth/time constraints from extension runtime.
+3. **Recommendation UX**
+   - Show best move, evaluation score, and optional top alternatives.
+   - Add clear states: loading, unavailable position, and engine error.
+4. **Stability and quality**
+   - Harden selectors and add fallback discovery logic.
+   - Add unit tests for parser and message contracts.
+   - Add smoke tests for popup-content-background flow.
+
+## Local Development
 ### Prerequisites
-
-Make sure you have [Node.js](https://nodejs.org/) (version 18+ or 20+) installed on your machine.
+- Node.js 18+ (or 20+)
 
 ### Setup
+```sh
+npm install
+```
 
-1. Clone or fork the repository :
-
-    ```sh
-    # To clone
-    git clone https://github.com/5tigerjelly/chrome-extension-react-template
-    cd chrome-extension-react-template
-    ```
-
-2. Install the dependencies:
-
-    ```sh
-    npm install
-    ```
-
-## 🏗️ Development
-
-To start the development server:
-
+### Run the app shell (Vite)
 ```sh
 npm run dev
 ```
 
-This will start the Vite development server and open your default browser.
-
-## 📦 Build 
-
-To create a production build:
-
+### Build extension assets
 ```sh
 npm run build
 ```
 
-This will generate the build files in the `build` directory.
+## Load in Chrome
+1. Open `chrome://extensions/`.
+2. Enable **Developer mode**.
+3. Click **Load unpacked** and select the `build/` directory.
 
-## 📂 Load Extension in Chrome
+## Project Structure
+- `public/manifest.json`: Extension configuration.
+- `public/background.js`: MV3 service worker + message hub.
+- `src/content.ts`: Chess.com move extraction and event forwarding.
+- `src/App.tsx`: Popup UI.
+- `vite.config.ts`: Build config (popup + content script entries).
 
-1. Open Chrome and navigate to `chrome://extensions/`.
-2. Enable "Developer mode" using the toggle switch in the top right corner.
-3. Click "Load unpacked" and select the `build` directory.
+## Git Notes
+If you want to remove the current `origin` remote, use:
 
-Your React app should now be loaded as a Chrome extension!
+```sh
+git remote remove origin
+```
 
-## 🗂️ Project Structure
-
-- `public/`: Contains static files and the `manifest.json`.
-- `src/`: Contains the React app source code.
-- `vite.config.ts`: Vite configuration file.
-- `tsconfig.json`: TypeScript configuration file.
-- `package.json`: Contains the project dependencies and scripts.
-
-## License
-
-This project is licensed under the MIT License.
+Your attempted command failed because `remove` is a subcommand of `git remote`, not `git`.

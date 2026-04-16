@@ -70,7 +70,7 @@ npm run build
 2. Open the **Release Chrome Extension** workflow.
 3. Click **Run workflow** and provide:
    - `tag` (for example: `v1.0.0`)
-   - optional `release_name`
+   - Optional `release_name`
    - `prerelease` flag
 4. After completion:
    - download the zip from the workflow artifact, or

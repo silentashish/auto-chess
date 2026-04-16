@@ -65,6 +65,17 @@ npm run dev
 npm run build
 ```
 
+## Create downloadable extension from CI
+1. Go to **Actions** in GitHub.
+2. Open the **Release Chrome Extension** workflow.
+3. Click **Run workflow** and provide:
+   - `tag` (for example: `v1.0.0`)
+   - Optional `release_name`
+   - `prerelease` flag
+4. After completion:
+   - download the zip from the workflow artifact, or
+   - open **Releases** and download `autochess-extension-<tag>.zip`.
+
 ## Load in Chrome
 1. Open `chrome://extensions/`.
 2. Enable **Developer mode**.
